@@ -1,4 +1,7 @@
 provider "aws" {
+  region     = "ap-south-1"
+  access_key = "AKIAQ3EGWBVVXITEB4G2"
+  secret_key = "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"
 }
 
 resource "aws_s3_bucket" "sandeep_s3bucket" {
