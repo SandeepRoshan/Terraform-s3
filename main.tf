@@ -1,3 +1,6 @@
+provider "aws" {
+}
+
 resource "aws_s3_bucket" "sandeep_s3bucket" {
   bucket = var.bucket_name
 
