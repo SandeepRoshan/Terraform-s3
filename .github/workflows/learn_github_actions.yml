@@ -1,20 +1,39 @@
 name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
-  terraform_run:
-    runs-on: ubuntu-22.04
+  terraform:
+    runs-on: ubuntu-latest
     steps:
-      - uses: hashicorp/setup-terraform@v3
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACC_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SACC_KEY }}
+        run: |
+          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV
+
+      - name: Initialize Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          aws-region: "ap-south-1"
-          aws-access-key-id: ${secrets.ACC_KEY}
-          aws-secret-access-key: ${secrets.SACC_KEY}
-      - uses: actions/checkout@v4
-      - run: terraform init
-      - run: terraform plan
-      - run: terraform apply -auto-approve
-      - run: sleep 120s
-      - run: terraform destroy -auto-approve
-      - run: exit
+          terraform_version: 1.0.0
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
