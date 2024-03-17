@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  terraform:
+  terraform_run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
